@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" type="text/css" href="CSS/style.css"/>
+        <link rel="shortcut icon" href="#">
+        <script src="JS/script.js" type="text/javascript"></script>
+        <script src="JS/sampleJSON.js" type="text/javascript"></script>
+        <script src="JS/functions.js" type="text/javascript"></script> 
+        <title>GMaps & Teleport API Project</title>
+    </head>
+    <body>
+        <header class = "flexRow header">
+            <img src = "./Images/Icon.png" alt = "website Icon image"/>
+            <h1 class = "siteTitle">GMaps & Teleport API Project</h1>
+            <div class = "flexColumn" style = "justify-content:space-between">
+                <a class = "button secondaryButton" href = "../">Back to Main Site</a>
+            </div>
+            <nav class = "flexRow siteNav"> 
+                <a class = "genericLink" href = "">Home</a>
+                <a class = "genericLink" href = "">Map Tool</a>
+            </nav>
+        </header>
+        <main class = "flexColumn">
+            <h2 class = "pageTitle">Urban Area Info Finder</h2>
+            <div class = "flexColumn mainContent">
+                <div class = " flexColumn filterBox">
+                    <h3>1. Choose The Stats You Are Interested In</h3>
+                    <div class = "flexRow filterBox_stats">
+                        <div class = "flexColumn userChoiceBox">
+                            <label for = "salariesOptions">Salaries for</label>
+                            <select id="salariesOptions">
+                            </select>
+                        </div>
+                        <div class = "flexColumn userChoiceBox">
+                            <label>Score 1</label>
+                            <select class = "scoresOptions">
+                            </select>
+                        </div>
+                        <div class = "flexColumn userChoiceBox">
+                            <label>Score 2</label>
+                            <select class = "scoresOptions"> 
+                            </select>
+                        </div>
+                        <div class = "flexColumn userChoiceBox">
+                            <label>Score 3</label>
+                            <select class = "scoresOptions">
+                            </select>
+                        </div>
+                        <div class = "flexColumn userChoiceBox">
+                            <label>Score 4</label>
+                            <select class = "scoresOptions">
+                            </select>
+                        </div>
+                        <div class = "flexColumn userChoiceBox">
+                            <label>Score 5</label>
+                            <select class = "scoresOptions">
+                            </select>
+                        </div>
+                        <div class = "flexColumn userChoiceBox">
+                            <label>Details</label>
+                            <select id="detailsOptions">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class = "flexRow mapContainer">
+                    <div id="map"></div>
+                    <div class ="stats flexColumn">
+                        <h3 id="city">2. Click a city on the map to get some stats!</h3>
+                        <span id="area"></span>
+                        <nav class = "flexRow chartNav">
+                            <button id = "salariesButton" class = "button primaryButton">Salaries</button>
+                            <span>|</span>
+                            <button id = "scoresButton" class = "button primaryButton">Scores</button>
+                            <span>|</span>
+                            <button id = "detailsButton" class = "button primaryButton">Details</button>
+                        </nav>
+                        <canvas id="myChart" width="400" height="400"></canvas>
+                        <div id="detailsReport"><p>Click on a city on the map to generate a report</p></div>
+                    </div>                    
+                </div>
+            </div>
+        </main>
+        <footer class = "flexRow footer">
+            <img src = "./Images/Icon.png" alt = "website Icon image"/>
+            <a href ="../" class = "button secondaryButton">Back to Main Site</a>
+        </footer>
+    </body>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOEAFF4EHYHpp9kiCkK-mnVD7DzRWT9Mg&callback=initMap&libraries=&v=weekly"async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src = "JS/chart.js" type = "text/javascript"></script>
+</html>
