@@ -3,7 +3,7 @@
 2. "details_categoriesJSON" 
 3. "scores_categoriesJSON*/
 /* Salaries */
-const salaries_salariesJSON = [ /* array of objects */
+const salariesJSON = [ /* array of objects */
     {
         "job": {
             "id": "ACCOUNT-MANAGER",
@@ -579,7 +579,7 @@ const salaries_salariesJSON = [ /* array of objects */
 ]
 
 
-const details_categoriesJSON = [/* array of objects */
+const detailsJSON = [/* array of objects */
     {
         "data": [
             {
@@ -1626,7 +1626,7 @@ const details_categoriesJSON = [/* array of objects */
     }
 ]
 
-const scores_categoriesJSON = [
+const scoresJSON = [
     {
         "color": "#f3c32c",
         "name": "Housing",

@@ -1,4 +1,4 @@
-/* This JS file contains everything to do with chart.js and graphing information*/
+/* This JS file contains functions to do with chart.js and graphing information*/
 /* Generate SAMPLE graph with sample data*/
 let labels = [
     'stat 1',
@@ -29,9 +29,9 @@ let myChart = new Chart(
     config
 );
 
-/* FUNCTIONS GRAPHS */
-/* Graph creates new config value for chart and updates the "myChart" */
-const updateGraphSalaries = () => {
+/* Function to update graph with salaries data */
+function updateGraphSalaries(){
+    console.log(salariesData)
     /* If no current salaries data, exit function */
    if(salariesData === null || salariesData === ""){
        return;
@@ -65,7 +65,8 @@ const updateGraphSalaries = () => {
    addData(myChart, labels, data)
 }
 
-const updateGraphScores = () => {
+/* Function to update graph with scores data */
+function updateGraphScores(){
     /* If no current scores data, exit function */
     if(scoresData === null || scoresData === ""){
         return;
@@ -74,6 +75,7 @@ const updateGraphScores = () => {
     labels = [];
     data = []
 
+    //update labels and datasets
     for(let i =0; i<scoresData.length; i++){
         if(scoresData[i] === undefined){
             labels[i] = 'not found';
@@ -85,7 +87,7 @@ const updateGraphScores = () => {
         }
 
     }
-    
+    //update data
     data = {
         labels: labels,
         datasets: [{
@@ -96,6 +98,7 @@ const updateGraphScores = () => {
         }]
     };
 
+    //add the new chart configuration
     function addData(chart, label, data){
         chart.data.labels = label
         chart.data = data
@@ -104,19 +107,15 @@ const updateGraphScores = () => {
     addData(myChart, labels, data)
 }
 
-const updateDetailsReport = () => {
-    /* If no current details data, exit function */
-    if(detailsData === null || detailsData === ""){
-        return;
-    }
- 
+/* Function to update report with details data */
+function updateDetailsReport(){
     let detailsReportHTML = `
         <h3>${document.getElementById("detailsOptions").value} Details Report</h3>
             <table>`;
                 
     for(let i =0; i<detailsData.length; i++){
-        if(detailsData[i].type='float'){
-            //Under the float data type there are many 'value' types - need to handle this
+        //Under the float data type there are many 'value' types - need to handle this
+        if(detailsData[i].type='float'){  
             let value = "";
             if(detailsData[i].float_value){value = 'float_value'}
             else if(detailsData[i].int_value){value = 'int_value'}
@@ -130,7 +129,7 @@ const updateDetailsReport = () => {
                 <td>${detailsData[i][value]}</td>
             </tr>`
         }
-
+        
         else if(detailsData[i].type='percent'){
             detailsReportHTML += `
             <tr>
@@ -159,20 +158,23 @@ const updateDetailsReport = () => {
     detailsReport.innerHTML = detailsReportHTML
 }
 
-/* Toggle controls whether the graph or the report is displayed for the user. inputs are "showReport" and "showGraph" */
-const toggle = (input) => {
+/* changeDisplay controls whether the graph or the report is displayed for the user. inputs are "showReport" and "showGraph" */
+function changeDisplay(selection){
     /* If showReport is sent, hide the chart and display the report */
-    if(input == "showReport"){
-        mainChart.style.display = 'none';
-        detailsReport.style.display = 'flex';
-    }
+    switch(selection){
+        case "details" : 
+            mainChart.style.display = 'none';
+            detailsReport.style.display = 'flex';
+            break;
 
-    /* If showGraph is sent, hide the report and display the chart */
-    else if(input == "showGraph"){
-        detailsReport.style.display = 'none';
-        mainChart.style.display = 'block';
+        case "scores" : 
+            detailsReport.style.display = 'none';
+            mainChart.style.display = 'block';
+            break;
+
+        case "salaries" : 
+            detailsReport.style.display = 'none';
+            mainChart.style.display = 'block';
+            break;
     }
-    else {
-        return;
-    };
 }

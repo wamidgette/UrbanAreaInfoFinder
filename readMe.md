@@ -1,11 +1,12 @@
-# Humber API Project - Urban Area Information Finder 
+# Google Maps and Teleport APIs Project - Urban Area Information Finder 
 
 ## DESCRIPTION: 
-This is project written in CSS, HTML, and vanilla JS that combines the: 
+Want to see the average annual salary for your job, quality of living, or almost any statistic you can think of in a foreign city by simply clicking on it on a map? This web app allows you to do that! Using filters via drop-down menu, users can select the information they want to know about a city before clicking on it on the Google Map and having that information graphed for them in a clear and consise bar graph or report!
+
+Written in CSS, HTML, and vanilla JS, this project combines: 
 Google maps API, (https://developers.google.com/maps/documentation/javascript/overview)
-the Teleport API, (https://developers.teleport.org/api/resources/Country/#!/relations/{rel}/), 
-and the Charts.js, (https://www.chartjs.org/)
-This application allows a user to quickly see stats on different cities around the world by simply clicking on a city on a world map. Statistics are filterable to whatever the user would like to see.
+Teleport API, (https://developers.teleport.org/api/resources/Country/#!/relations/{rel}/), 
+Charts.js, (https://www.chartjs.org/)
 
 ## FEATURES:
 - User can change data filters based on what is available through the Teleport API. A sample JSON file is used to populate each dropdpown list. 3 main categoreies of information available for each city are Salaries, City Rankings (or scores), and Details.
@@ -26,6 +27,5 @@ This application allows a user to quickly see stats on different cities around t
 -Right now, it is still a bit finicky and you have to zoom in and click very close to an urban center to have the API recognize the coordinates. I plan on making this more user friendly by making a marker on the map for each urban area that is listed within the Teleport API. This way a user can see much more clearly where they need to click. I have already created a query string that contains the coordinates of the main city for each urban area: https://api.teleport.org/api/urban_areas/?embed=ua%3Aitem%2Fua%3Aidentifying%2Dcity. These coordinates can be pushed into a list of LatLng objects and then looped through to make a new marker for each. Still working on this! 
 - Provide smoother panning to new map center when clicked, instead of a sudden change in map view
 - responsive design
-- Run API requests in parallel for faster responses
 - Improve original API GET request URL to Embed scores/details/salaries data. This will reduce the total number of requests that need to be made
 

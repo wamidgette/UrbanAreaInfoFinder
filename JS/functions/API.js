@@ -1,117 +1,108 @@
-const requestLocation = () => {
-    if(locationRequest.readyState == 4 && locationRequest.status == 200){
-        /* Get response */
-        response = JSON.parse(locationRequest.responseText);
-        //Define arrays that hold city and urban area info
-        cityList = response._embedded["location:nearest-cities"];
-        areaList = response._embedded["location:nearest-urban-areas"];
-        
-        //define nearest city and urbanarea
-        if(cityList === null){
-            city.innerHTML="We Couldnt find a nearby city. Try clicking closer to a major city!"; 
-            area.innerHTML=""; 
+async function getAllUrbanAreas(){
+    await fetch('https://api.teleport.org/api/urban_areas/?embed=ua%3Aitem%2Fua%3Aidentifying%2Dcity').then(
+        function(response){
+            return response.json();
         }
-
-        else if(areaList.length === 0){
-            nearestCity = cityList[0]._links["location:nearest-city"].name; 
-            city.innerHTML="Nearest City: " + nearestCity;
-            area.innerHTML="We Couldnt find a nearby urban center. Try clicking closer to a major city!"; 
-        }
-
-        //When an urban area and city are returned successfully, make additional API calls to retrieve additional information about the uban center - display the information on graphs on the webpage
-        else{
-            nearestCity = cityList[0]._links["location:nearest-city"].name; 
-            urbanArea =  areaList[0]._links["location:nearest-urban-area"].name
-            city.innerHTML="Nearest City: " + nearestCity;
-            area.innerHTML="Urban Area: " + urbanArea; 
-            /* console.log(urbanArea, nearestCity); */
-
-            /* Get the statistics for the urban area */
-            scoresUrl = areaList[0]._links["location:nearest-urban-area"].href + "scores/";
-            salariesUrl = areaList[0]._links["location:nearest-urban-area"].href + "salaries/";
-            detailsUrl = areaList[0]._links["location:nearest-urban-area"].href + "details/";
-            console.log(salariesUrl);
-            /* Call the scores, salaries and details requests with the urls generated above */
-
-            salariesRequest.open("GET", salariesUrl, true);
-            scoresRequest.open("GET", scoresUrl, true);
-            detailsRequest.open("GET", detailsUrl, true);
-
-            salariesRequest.send();
-            scoresRequest.send(); 
-            detailsRequest.send();
-        }
-    }
-};
-
-const requestScores = () => {
-    if(scoresRequest.readyState == 4 && scoresRequest.status == 200){
-        let scores = JSON.parse(scoresRequest.responseText);
-
-        /* All scores for this city */
-        scoresList = scores.categories
-        console.log(scoresList);
-
-        //If user has selected scores, extract scores for those values 
-        for(let i=0; i<scoreChoices.length;i++){
-            scoresData[i] = scoresList.find(function(object, index){
-                console.log('finding' + scoreChoices[i] + 'in the scoresList')
-                if(object.name == scoreChoices[i]){
-                    return true;
+    ).then(
+        function(data){
+            let uaItems = data._embedded['ua:item']
+            console.log(uaItems)
+            for(let i = 0; i<uaItems.length; i++){
+                mainCities[i] = {
+                    'name' : uaItems[i].name, 
+                    'latlng' : [uaItems[i]._embedded['ua:identifying-city'].location.latlon.latitude, 
+                    uaItems[i]._embedded['ua:identifying-city'].location.latlon.longitude]
                 }
-            })
+            } 
+            console.log(mainCities)
         }
-        console.log(scoresData);
-        //If the entire list of scoresData is not undefined, update the graph (i.e. if the user has selected at least 1 item that can be displayed) 
-        if(scoresData[0] !== undefined || scoresData[1] !== undefined || scoresData[2] !== undefined || scoresData[3] !== undefined || scoresData[4] !== undefined ){
-            updateGraphScores()
+    )
+    return mainCities;
+}
+/* Create the API function to handle requests*/
+function locationResponseHandle(data){
+    //update arrays that hold city and urban area info
+    let cityList = data._embedded["location:nearest-cities"];
+    let areaList = data._embedded["location:nearest-urban-areas"];
+
+    //define nearest city and urbanarea
+    if(cityList === null || cityList.length === 0){
+        city.innerHTML="We Couldnt find a nearby city. Try clicking closer to a major city!"; 
+        area.innerHTML=""; 
+    }
+
+    else if(areaList === null || areaList.length === 0){
+        nearestCity = cityList[0]._links["location:nearest-city"].name; 
+        city.innerHTML="Nearest City: " + nearestCity;
+        area.innerHTML="We Couldnt find a nearby urban center. Try clicking closer to a major city!"; 
+    }
+
+    //When an urban area and city are returned successfully, make additional API calls to retrieve additional information about the uban center - display the information on graphs on the webpage
+    else{
+        nearestCity = cityList[0]._links["location:nearest-city"].name; 
+        urbanArea =  areaList[0]._links["location:nearest-urban-area"].name
+        city.innerHTML="Nearest City: " + nearestCity;
+        area.innerHTML="Urban Area: " + urbanArea; 
+        /* console.log(urbanArea, nearestCity); */
+
+        /* Set urls for the follow up requests*/
+        let url = {
+            scoresUrl : areaList[0]._links["location:nearest-urban-area"].href + "scores/",
+            salariesUrl : areaList[0]._links["location:nearest-urban-area"].href + "salaries/",
+            detailsUrl : areaList[0]._links["location:nearest-urban-area"].href + "details/"
         }
-        else{
-            alert("Select information to display before clicking on map!");
-        }
+        return url
     }
 }
 
-const requestSalaries = () =>{
-    if(salariesRequest.readyState == 4 && salariesRequest.status == 200){
-        /* Response JSON */
-        salaries = JSON.parse(salariesRequest.responseText);
-
-        salariesList = salaries.salaries;
-        console.log(salariesList)
-        //extract salaries for chosen job 
-        salariesData = salariesList.find(function(object, index){
-            if(object.job.id == salariesUserChoice){
-                return true;
-            }
-        })
-        console.log(salariesData)
-        /* If there is salary data to display, update the graph */
-        if(salariesData !== undefined){
-            //Update the salaries graph with the salariesdata 
-            updateGraphSalaries();
+//Request scores data 
+async function requestScores(url){
+    fetch(url).then(
+        function(response){
+            return response.json()
         }
-    } 
+    ).then(
+        function (scores){
+            //parse json to get new scores list 
+            scoresList = scores.categories
+            console.log(scoresList);
+            //Update the scoresData object 
+            updateData('scores');
+            console.log(scoresData);
+        }
+    )
+}
+    
+async function requestSalaries(url){
+    fetch(url).then(
+        function(response){
+            return response.json()
+        }
+    ).then(
+        function(salariesObject){
+            salariesList = salariesObject.salaries;
+            console.log(salariesList)
+            //Update the salariesData object
+            updateData('salaries');
+            console.log(salariesData)
+        }
+    )
 } 
 
-const requestDetails = () => {
-    if(detailsRequest.readyState == 4 && detailsRequest.status == 200){
-        details = JSON.parse(detailsRequest.responseText);
-
-        detailsList = details.categories;
-        console.log(detailsList);
-        
-        detailsData = detailsList.find(function(object, index){
-            if(object.id == detailsUserChoice){
-                return true;
-            }
-        }).data
-        console.log(detailsData)
-        //if there is details data to display, update the report
-        if(detailsData !== (undefined || null)){
-            //Update the details report with the detailsdata 
-            updateDetailsReport();
+async function requestDetails(url){
+    fetch(url).then(
+        function(response){
+            return response.json()
         }
-    }
+    ).then(
+        function(details){
+            detailsList = details.categories;
+            console.log(detailsList);
+            //Update the detailsData object
+            updateData('details');
+            console.log(detailsData)
+        }
+    )
 }
+
 
