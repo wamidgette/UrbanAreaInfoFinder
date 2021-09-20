@@ -31,9 +31,10 @@ let myChart = new Chart(
 
 /* Function to update graph with salaries data */
 function updateGraphSalaries(){
-    console.log(salariesData)
+    let salariesData = Data.salariesData;
+    console.log(salariesData.job)
     /* If no current salaries data, exit function */
-   if(salariesData === null || salariesData === ""){
+   if(salariesData.job === undefined){
        return;
    }
 
@@ -67,6 +68,7 @@ function updateGraphSalaries(){
 
 /* Function to update graph with scores data */
 function updateGraphScores(){
+    let scoresData = Data.scoresData;
     /* If no current scores data, exit function */
     if(scoresData === null || scoresData === ""){
         return;
@@ -100,7 +102,7 @@ function updateGraphScores(){
 
     //add the new chart configuration
     function addData(chart, label, data){
-        chart.data.labels = label
+        chart.datalabels = label
         chart.data = data
         chart.update();
     }
@@ -110,11 +112,18 @@ function updateGraphScores(){
 /* Function to update report with details data */
 function updateDetailsReport(){
     let detailsReportHTML = `
-        <h3>${document.getElementById("detailsOptions").value} Details Report</h3>
+        <h3>${(detailsOptions.value === 'null')? (
+            "No Details Yet Selected"
+        ) : ((Data.detailsList.length === 0)? (
+                `Click a city to get ${detailsOptions.value} details`) : (
+                `${detailsOptions.value} Details Report`
+            )
+        )}</h3>
             <table>`;
                 
-    for(let i =0; i<detailsData.length; i++){
+    for(let i =0; i<Data.detailsData.length; i++){
         //Under the float data type there are many 'value' types - need to handle this
+        let detailsData = Data.detailsData
         if(detailsData[i].type='float'){  
             let value = "";
             if(detailsData[i].float_value){value = 'float_value'}

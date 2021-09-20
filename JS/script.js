@@ -6,6 +6,7 @@ function initMap() {
         center: { lat: 43.70011, lng: -79.4163 },
         zoom: 3,
     });
+    
     /* TRIGGER MAIN APPLICATION */
     window.onload = runApp();
 }
@@ -13,14 +14,15 @@ function initMap() {
 function runApp(){
     loadVars();
     /* CALL TELEPORT API FOR ALL MAIN CITIES - CREATE MARKER ON GOOGLE MAPS FOR EACH */
-    getAllUrbanAreas().then(
+    Teleport.getAllUrbanAreas().then(
         function(mainCities){
             //create marker for each main city in the array
             for(let i=0; i<mainCities.length; i++){
                 marker = new google.maps.Marker({
                     position: {lat : mainCities[i].latlng[0], lng : mainCities[i].latlng[1]},
                     map: myMap,
-                    title: mainCities[i].name
+                    title: mainCities[i].name,
+                    optimized : true
                 });
                 /* create event when user clicks on any marker */
                 marker.addListener("click", function(){
@@ -38,70 +40,25 @@ function runApp(){
         }
     )
 
-    /* CALL TELEPORT FOR LOCATION INFO WITH URL CONTAINING COORDINATES */
-    function callTeleport(locationUrl){
-        //Send request for information at these coordinates
-        fetch(locationUrl).then(
-            function(response){
-                return response.json()
-            }
-        ).then(
-            function(data){
-                //This function will use the response data to generate urls to request salaries, scores, details
-                return(locationResponseHandle(data))
-            }
-        ).then(
-            function(urls){
-                //send new requests for scores, salaries, and details with urls generated
-                //functions also handle responses
-                requestSalaries(urls.salariesUrl);
-                requestScores(urls.scoresUrl);
-                requestDetails(urls.detailsUrl);
-            }        
-        ).then(
-            function(){
-                //Display information 
-                //will discuss why it is also necessary to updateGraph____() again - not ideal, trying to fix this
-                switch(selected){
-                    case 'salaries' :
-                        updateGraphSalaries();
-                        break;
-                    case 'scores' :
-                        updateGraphScores();
-                        break;
-                    case 'details' :
-                        updateDetailsReport();
-                        break;
-                }
-                //display either graph or report based on user's last selection
-                changeDisplay(selected);
-            }
-        )
-    }
-
     /* POPULATE DROP DOWN MENUS (FILTERS) FROM SAMPLE JSON FILES */
-    salariesOptions.innerHTML = generateSalaryOptions(salariesJSON);
-    detailsOptions.innerHTML = generateDetailsOptions(detailsJSON);
+    console.log(salariesButton)
+    salariesOptions.innerHTML = Data.generateSalaryOptions(SampleJson.salariesJSON);
+    detailsOptions.innerHTML = Data.generateDetailsOptions(SampleJson.detailsJSON);
     for(let i=0; i<scoresOptions.length;i++){
-        scoresOptions[i].innerHTML = generateScoreOptions(scoresJSON);
+        scoresOptions[i].innerHTML = Data.generateScoreOptions(SampleJson.scoresJSON);
     }
-
-
-    /* HANDLE USER SELECTION EVENTS */
+    /* HANDLE INPUT CHANGE EVENTS */
     let selected = "";
-
     // When user selects a new job, update the selection, search the available data, and update graph
     salariesOptions.addEventListener('input', function(){
         selected = "salaries"
         //Update the data selection from data list with the user's new selection 
-        updateData(selected)
+        Data.updateData(selected)
         //if there is any information to display in data object
-        console.log(salariesData)
+        console.log(Data.salariesData)
         //if there is data update the graph
-        if(salariesData !== undefined){
-            //update graph data
-            updateGraphSalaries()
-        }
+        //update graph data
+        updateGraphSalaries()
         //display the graph
         changeDisplay(selected);
     });
@@ -110,12 +67,10 @@ function runApp(){
     detailsOptions.addEventListener('input', function(){
         selected = "details"
         // Update the data selection from data list with the user's new selection 
-        updateData(selected)
+        Data.updateData(selected)
         //if there is data update the report
-        if(detailsData !== undefined){
-            //Update report data
-            updateDetailsReport()
-        }
+        //Update report data
+        updateDetailsReport()
         //display the report
         changeDisplay(selected);
     })
@@ -126,9 +81,10 @@ function runApp(){
         scoresOptions[i].addEventListener('input', function (){
             selected = "scores"
             // Update the data selection from data list with the user's new selection 
-            updateData(selected)
-            console.log(scoresData)
+            Data.updateData(selected)
+            console.log(Data.scoresData)
             //if there is data update the graph
+            let scoresData = Data.scoresData;
             if(scoresData[0] !== undefined || scoresData[1] !== undefined || scoresData[2] !== undefined || scoresData[3] !== undefined || scoresData[4] !== undefined ){
                 //Update report data
                 updateGraphScores()
@@ -159,5 +115,65 @@ function runApp(){
         selected = "details"
         updateDetailsReport()
         changeDisplay(selected); 
+    }
+
+    /* CALL TELEPORT FOR LOCATION INFO WITH URL CONTAINING COORDINATES */
+    function callTeleport(locationUrl){
+        //Send request for information at these coordinates
+        fetch(locationUrl).then(
+            function(response){
+                return response.json()
+            }
+        ).then(
+            function(data){
+                //This function will use the response data to generate urls to request salaries, scores, details
+                return(Teleport.locationResponseHandle(data))
+            }
+        ).then(
+            function(urls){
+                return(
+                    Promise.all([Teleport.requestScores(urls.scoresUrl),
+                        Teleport.requestDetails(urls.detailsUrl),Teleport.requestSalaries(urls.salariesUrl) ])
+                    //send new requests for scores, salaries, and details with urls generated
+                    //functions also handle responses
+/*                     ,
+ */                 
+                )
+            }
+        ).then(
+            function(){
+                //If the user has not many any choices at all, alert them to choose
+                if(
+                    salariesOptions.value === 'null' &&
+                    detailsOptions.value === 'null' &&
+                    (
+                        scoresOptions[0].value &&
+                        scoresOptions[1].value &&
+                        scoresOptions[2].value &&
+                        scoresOptions[3].value &&
+                        scoresOptions[4].value
+                    ) === 'null'
+                ){
+                    alert('Select data from dropdown before clicking on a city.');
+                    return
+                }
+                console.log(selected)
+                //Display information 
+                //will discuss why it is also necessary to updateGraph____() again - not ideal, trying to fix this
+                switch(selected){
+                    case 'salaries' :
+                        updateGraphSalaries();
+                        break;
+                    case 'scores' :
+                        updateGraphScores();
+                        break;
+                    case 'details' :
+                        updateDetailsReport();
+                        break;
+                }
+                //display either graph or report based on user's last selection
+                changeDisplay(selected);
+            }
+        )
     }
 }

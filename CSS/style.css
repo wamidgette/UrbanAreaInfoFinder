@@ -125,6 +125,7 @@ main{
 .mainContent{
     margin:0;
     min-height:60vmin;
+    width:100%;
     border: 1px solid black;
 }
 
@@ -158,16 +159,20 @@ label{
     text-align:center;
     margin-bottom:0.3em;
 }
+
 .mapContainer{
-    flex-wrap:nowrap;
+    width:100%;
+    flex-wrap:wrap;
     position:relative;
 }
 
 #map{
-    width: 75vw;
-    min-height:60vmin;
+    flex: 4 1 60%;
+    /* width: 75vw; */
+    min-height:50vh;
     position:relative;
     cursor:pointer;
+    align-items: stretch;
 }
 
 .chartNav{  
@@ -175,12 +180,12 @@ label{
 }
 
 .stats{
-    width: 25vw;
+    /* width: 25vw; */
     background-color: rgb(165, 165, 165);
     align-items: center;
     padding:0 1em 1em 1em;
     justify-content: space-around;
-    min-height:60vmin;
+    flex: 1 1 300px;
 }
 
 #area{
@@ -190,7 +195,7 @@ label{
 
 #myChart{
     display:none;
-    width:100%;
+    max-width:100%;
     background-color: white;
     position:relative;
     max-height:300px;
