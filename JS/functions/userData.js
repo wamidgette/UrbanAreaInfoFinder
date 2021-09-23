@@ -42,7 +42,7 @@ class Data{
         switch(dataType){
             case 'salaries': 
                 if(this.salariesList.length === 0 || salariesOptions.value === 'null'){
-                    this.salariesData = {};
+                    this.salariesData = [];
                     break;
                 }
                 /* update the data by querying the salariesList*/
@@ -57,7 +57,7 @@ class Data{
                 /*  update the data by querying the detailsList*/
                 //if the detailsList is an empty array, dont update the detailsData 
                 if(this.detailsList.length === 0 || detailsOptions.value === 'null'){
-                    this.detailsData = {};
+                    this.detailsData = [];
                     break;
                 }
 
@@ -69,10 +69,19 @@ class Data{
                 break;
                 
             case 'scores': 
-                if(this.scoresList.length === 0  || (scoresOptions[0] && scoresOptions[1] && scoresOptions[2] && scoresOptions[3] && scoresOptions[4]) === 'null'){
-                    this.detailsData = {};
+                if(this.scoresList.length === 0  || (
+                    scoresOptions[0].value === 'null' && 
+                    scoresOptions[1].value === 'null' && 
+                    scoresOptions[2].value === 'null' && 
+                    scoresOptions[3].value === 'null' && 
+                    scoresOptions[4].value === 'null' 
+                )){
+                    alert('they are null')
+                    this.scoresData = [];
                     break;
                 }
+                console.log(scoresOptions)
+                alert('they must not be null')
                 /* update the scores data acoording to the new choice */
                 for(let i=0; i<scoresOptions.length;i++){
                     this.scoresData[i] = this.scoresList.find(function(object, index){

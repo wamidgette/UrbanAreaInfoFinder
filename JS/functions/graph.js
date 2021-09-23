@@ -187,4 +187,4 @@ function changeDisplay(selection){
             mainChart.style.display = 'block';
             break;
     }
-}s
+}
