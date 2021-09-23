@@ -69,8 +69,9 @@ function updateGraphSalaries(){
 /* Function to update graph with scores data */
 function updateGraphScores(){
     let scoresData = Data.scoresData;
+    console.log(scoresData)
     /* If no current scores data, exit function */
-    if(scoresData === null || scoresData === ""){
+    if(scoresData.length === 0){
         return;
     }
 
@@ -186,4 +187,4 @@ function changeDisplay(selection){
             mainChart.style.display = 'block';
             break;
     }
-}
+}s

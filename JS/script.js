@@ -3,8 +3,8 @@ function initMap() {
     /*CREATE MAP IN THE "MAP" DOM DIV ELEMENT*/
     myMap = new google.maps.Map(document.getElementById("map"), 
     {
-        center: { lat: 43.70011, lng: -79.4163 },
-        zoom: 3,
+        center: { lat: 48.13743, lng: 11.57549 },
+        zoom: 5,
     });
     
     /* TRIGGER MAIN APPLICATION */
@@ -85,7 +85,13 @@ function runApp(){
             console.log(Data.scoresData)
             //if there is data update the graph
             let scoresData = Data.scoresData;
-            if(scoresData[0] !== undefined || scoresData[1] !== undefined || scoresData[2] !== undefined || scoresData[3] !== undefined || scoresData[4] !== undefined ){
+            if(
+                scoresData[0] !== undefined || 
+                scoresData[1] !== undefined || 
+                scoresData[2] !== undefined || 
+                scoresData[3] !== undefined || 
+                scoresData[4] !== undefined 
+            ){
                 //Update report data
                 updateGraphScores()
             }
@@ -133,11 +139,9 @@ function runApp(){
             function(urls){
                 return(
                     Promise.all([Teleport.requestScores(urls.scoresUrl),
-                        Teleport.requestDetails(urls.detailsUrl),Teleport.requestSalaries(urls.salariesUrl) ])
+                        Teleport.requestDetails(urls.detailsUrl),Teleport.requestSalaries(urls.salariesUrl)])
                     //send new requests for scores, salaries, and details with urls generated
                     //functions also handle responses
-/*                     ,
- */                 
                 )
             }
         ).then(
@@ -146,13 +150,11 @@ function runApp(){
                 if(
                     salariesOptions.value === 'null' &&
                     detailsOptions.value === 'null' &&
-                    (
-                        scoresOptions[0].value &&
-                        scoresOptions[1].value &&
-                        scoresOptions[2].value &&
-                        scoresOptions[3].value &&
-                        scoresOptions[4].value
-                    ) === 'null'
+                    scoresOptions[0].value === 'null' &&
+                    scoresOptions[1].value === 'null' &&
+                    scoresOptions[2].value === 'null' &&
+                    scoresOptions[3].value === 'null' &&
+                    scoresOptions[4].value === 'null'
                 ){
                     alert('Select data from dropdown before clicking on a city.');
                     return
