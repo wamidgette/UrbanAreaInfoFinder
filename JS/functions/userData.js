@@ -76,12 +76,10 @@ class Data{
                     scoresOptions[3].value === 'null' && 
                     scoresOptions[4].value === 'null' 
                 )){
-                    alert('they are null')
                     this.scoresData = [];
                     break;
                 }
                 console.log(scoresOptions)
-                alert('they must not be null')
                 /* update the scores data acoording to the new choice */
                 for(let i=0; i<scoresOptions.length;i++){
                     this.scoresData[i] = this.scoresList.find(function(object, index){
